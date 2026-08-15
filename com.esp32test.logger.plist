@@ -11,12 +11,12 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/willmcglaughlin/Documents/code/esp32test/start_logger.sh</string>
+        <string>/Users/administrator/code/weather-station/start_logger.sh</string>
     </array>
 
     <!-- Working directory (logger.py also resolves paths from SCRIPT_DIR, but good practice) -->
     <key>WorkingDirectory</key>
-    <string>/Users/willmcglaughlin/Documents/code/esp32test</string>
+    <string>/Users/administrator/code/weather-station</string>
 
     <!-- Restart automatically if the process exits for any reason -->
     <key>KeepAlive</key>
@@ -32,8 +32,8 @@
 
     <!-- Stdout/stderr captured here (logger.py also writes esp32_influx.log) -->
     <key>StandardOutPath</key>
-    <string>/Users/willmcglaughlin/Documents/code/esp32test/launchd_stdout.log</string>
+    <string>/Users/administrator/code/weather-station/launchd_stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/willmcglaughlin/Documents/code/esp32test/launchd_stderr.log</string>
+    <string>/Users/administrator/code/weather-station/launchd_stderr.log</string>
 </dict>
 </plist>
