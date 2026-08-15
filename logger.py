@@ -33,6 +33,7 @@ INFLUX_URL = os.getenv("INFLUX_URL", "http://localhost:8086")
 INFLUX_TOKEN = os.getenv("INFLUX_TOKEN")
 INFLUX_ORG = os.getenv("INFLUX_ORG", "personal")
 INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "weather-station")
+WRITE_INTERVAL = int(os.getenv("WRITE_INTERVAL", "60"))  # seconds between InfluxDB writes
 
 if not INFLUX_TOKEN:
     raise ValueError("INFLUX_TOKEN environment variable must be set")
@@ -70,6 +71,7 @@ def connect_serial():
 
 ser = connect_serial()
 running = True
+last_write = 0.0
 
 
 def handle_shutdown(sig, frame):
@@ -94,6 +96,11 @@ while running:
         data = json.loads(line)
 
         if all(k in data for k in ("temperature", "humidity", "pressure")):
+            now = time.monotonic()
+            if now - last_write < WRITE_INTERVAL:
+                continue
+
+            last_write = now
             point = (
                 Point("bme280_telemetry")
                 .tag("location", "desk")
