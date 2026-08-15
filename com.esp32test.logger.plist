@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Unique identifier for this service -->
+    <key>Label</key>
+    <string>com.esp32test.logger</string>
+
+    <!-- Run start_logger.sh; it execs into python so signals propagate correctly -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/willmcglaughlin/Documents/code/esp32test/start_logger.sh</string>
+    </array>
+
+    <!-- Working directory (logger.py also resolves paths from SCRIPT_DIR, but good practice) -->
+    <key>WorkingDirectory</key>
+    <string>/Users/willmcglaughlin/Documents/code/esp32test</string>
+
+    <!-- Restart automatically if the process exits for any reason -->
+    <key>KeepAlive</key>
+    <true/>
+
+    <!-- Start immediately when the plist is loaded -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Throttle rapid restart loops (seconds between restarts) -->
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+
+    <!-- Stdout/stderr captured here (logger.py also writes esp32_influx.log) -->
+    <key>StandardOutPath</key>
+    <string>/Users/willmcglaughlin/Documents/code/esp32test/launchd_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/willmcglaughlin/Documents/code/esp32test/launchd_stderr.log</string>
+</dict>
+</plist>
