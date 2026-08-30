@@ -137,19 +137,22 @@ bool InfluxReporter::send(float uvIndex, float lux, uint32_t uvRaw,
 
   HTTPClient http;
   http.begin(url);
+  http.setConnectTimeout(5000);
+  http.setTimeout(5000);
   http.addHeader("Authorization", "Token " + String(INFLUX_TOKEN));
   http.addHeader("Content-Type", "text/plain; charset=utf-8");
 
+  uint32_t t0 = millis();
   int code = http.POST(body);
-  String resp = http.getString();
   http.end();
+  uint32_t dt = millis() - t0;
 
   Serial.printf("[influx] body: %s\n", body.c_str());
-  Serial.printf("[influx] POST -> %d %s\n", code,
-                (code >= 200 && code < 300) ? "ok" : "FAIL");
+  Serial.printf("[influx] POST -> %d %s (%lums)\n", code,
+                (code >= 200 && code < 300) ? "ok" : "FAIL",
+                (unsigned long)dt);
   if (code < 200 || code >= 300) {
     Serial.printf("[influx] error: %s\n", http.errorToString(code).c_str());
-    Serial.printf("[influx] response: %s\n", resp.c_str());
   }
 
   return code >= 200 && code < 300;
