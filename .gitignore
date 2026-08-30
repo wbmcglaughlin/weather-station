@@ -5,5 +5,8 @@
 .vscode/ipch
 .aider*
 .env
+include/config.h
 .venv/
 *.log
+__pycache__/
+*.pyc

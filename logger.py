@@ -33,6 +33,7 @@ INFLUX_URL = os.getenv("INFLUX_URL", "http://localhost:8086")
 INFLUX_TOKEN = os.getenv("INFLUX_TOKEN")
 INFLUX_ORG = os.getenv("INFLUX_ORG", "personal")
 INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "weather-station")
+LOCATION = os.getenv("LOCATION", "desk")
 WRITE_INTERVAL = int(os.getenv("WRITE_INTERVAL", "60"))  # seconds between InfluxDB writes
 
 if not INFLUX_TOKEN:
@@ -72,6 +73,7 @@ def connect_serial():
 ser = connect_serial()
 running = True
 last_write = 0.0
+last_write_ltr390 = 0.0
 
 
 def handle_shutdown(sig, frame):
@@ -103,7 +105,7 @@ while running:
             last_write = now
             point = (
                 Point("bme280_telemetry")
-                .tag("location", "desk")
+                .tag("location", LOCATION)
                 .field("temperature", float(data["temperature"]))
                 .field("humidity", float(data["humidity"]))
                 .field("pressure", float(data["pressure"]))
@@ -114,6 +116,27 @@ while running:
                 f"Logged data - Temp: {float(data['temperature']):.2f}°C | "
                 f"Humidity: {float(data['humidity']):.2f}% | "
                 f"Pressure: {float(data['pressure']):.2f}hPa"
+            )
+
+        elif all(k in data for k in ("uv_index", "lux")):
+            now = time.monotonic()
+            if now - last_write_ltr390 < WRITE_INTERVAL:
+                continue
+
+            last_write_ltr390 = now
+            point = (
+                Point("ltr390_telemetry")
+                .tag("location", LOCATION)
+                .field("uv_index", float(data["uv_index"]))
+                .field("lux", float(data["lux"]))
+                .field("uv_raw", int(data.get("uv_raw", 0)))
+                .field("als_raw", int(data.get("als_raw", 0)))
+            )
+
+            write_api.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=point)
+            logger.info(
+                f"Logged data - UV Index: {float(data['uv_index']):.2f} | "
+                f"Lux: {float(data['lux']):.2f}"
             )
 
     except (serial.SerialException, serial.SerialTimeoutException) as e:

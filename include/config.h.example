@@ -1,0 +1,16 @@
+#pragma once
+
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASS "YOUR_WIFI_PASSWORD"
+#define WIFI_SSID_ALT "YOUR_ALT_WIFI_SSID"
+#define WIFI_PASS_ALT "YOUR_ALT_WIFI_PASSWORD"
+
+#define INFLUX_HOST "server"
+#define INFLUX_FALLBACK_IP "192.168.0.2"
+#define INFLUX_PORT 8086
+#define INFLUX_ORG "personal"
+#define INFLUX_BUCKET "weather-station"
+#define INFLUX_TOKEN "YOUR_INFLUXDB_TOKEN"
+#define INFLUX_LOCATION "testing"
+
+#define REPORT_INTERVAL_S 60
