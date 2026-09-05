@@ -173,3 +173,13 @@ bool InfluxReporter::sendBme280(float temperature, float humidity,
                 ",pressure=" + String(pressure, 2);
   return post(body);
 }
+
+bool InfluxReporter::sendRainGauge(uint32_t tips, uint32_t totalTips,
+                                   float rainfallMm, float totalRainfallMm) {
+  String body = "rain_gauge,location=" + String(INFLUX_LOCATION) +
+                " tips=" + String((unsigned long)tips) + "i" +
+                ",total_tips=" + String((unsigned long)totalTips) + "i" +
+                ",rainfall_mm=" + String(rainfallMm, 2) +
+                ",total_rainfall_mm=" + String(totalRainfallMm, 2);
+  return post(body);
+}

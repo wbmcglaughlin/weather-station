@@ -8,6 +8,8 @@ public:
   bool begin();
   bool send(float uvIndex, float lux, uint32_t uvRaw, uint32_t alsRaw);
   bool sendBme280(float temperature, float humidity, float pressure);
+  bool sendRainGauge(uint32_t tips, uint32_t totalTips, float rainfallMm,
+                     float totalRainfallMm);
 
 private:
   bool post(const String &body);
