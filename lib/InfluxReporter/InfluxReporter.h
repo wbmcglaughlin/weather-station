@@ -7,8 +7,10 @@ class InfluxReporter {
 public:
   bool begin();
   bool send(float uvIndex, float lux, uint32_t uvRaw, uint32_t alsRaw);
+  bool sendBme280(float temperature, float humidity, float pressure);
 
 private:
+  bool post(const String &body);
   bool connect();
   bool ensureWifi();
   bool resolveHost(const char *hostname, IPAddress &ip);

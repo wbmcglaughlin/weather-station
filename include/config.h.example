@@ -13,4 +13,11 @@
 #define INFLUX_TOKEN "YOUR_INFLUXDB_TOKEN"
 #define INFLUX_LOCATION "testing"
 
+// mDNS hostname advertised by this board. Set per-environment via
+// build_flags in platformio.ini (esp32-bme280 / esp32-ltr390) so two
+// boards can share one network.
+#ifndef DEVICE_NAME
+#define DEVICE_NAME "esp32"
+#endif
+
 #define REPORT_INTERVAL_S 60

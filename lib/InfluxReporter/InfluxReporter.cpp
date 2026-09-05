@@ -6,6 +6,10 @@
 
 #include "config.h"
 
+#ifndef DEVICE_NAME
+#define DEVICE_NAME "esp32"
+#endif
+
 namespace {
 constexpr uint32_t kConnectTimeoutMs = 15000;
 
@@ -93,7 +97,7 @@ bool InfluxReporter::connect() {
                 WiFi.RSSI());
 
   if (!mdnsStarted_) {
-    if (MDNS.begin("esp32-ltr390")) {
+    if (MDNS.begin(DEVICE_NAME)) {
       mdnsStarted_ = true;
     } else {
       Serial.println("[influx] mDNS init failed");
@@ -118,8 +122,7 @@ bool InfluxReporter::begin() {
   return connect();
 }
 
-bool InfluxReporter::send(float uvIndex, float lux, uint32_t uvRaw,
-                          uint32_t alsRaw) {
+bool InfluxReporter::post(const String &body) {
   if (!connect()) {
     Serial.println("[influx] not ready");
     return false;
@@ -128,12 +131,6 @@ bool InfluxReporter::send(float uvIndex, float lux, uint32_t uvRaw,
   String url = "http://" + serverIp_.toString() + ":" +
                String(INFLUX_PORT) + "/api/v2/write?org=" + INFLUX_ORG +
                "&bucket=" + INFLUX_BUCKET;
-
-  String body = "ltr390_telemetry,location=" + String(INFLUX_LOCATION) +
-                " uv_index=" + String(uvIndex, 2) +
-                ",lux=" + String(lux, 2) +
-                ",uv_raw=" + String((unsigned long)uvRaw) + "i" +
-                ",als_raw=" + String((unsigned long)alsRaw) + "i";
 
   HTTPClient http;
   http.begin(url);
@@ -156,4 +153,23 @@ bool InfluxReporter::send(float uvIndex, float lux, uint32_t uvRaw,
   }
 
   return code >= 200 && code < 300;
+}
+
+bool InfluxReporter::send(float uvIndex, float lux, uint32_t uvRaw,
+                          uint32_t alsRaw) {
+  String body = "ltr390_telemetry,location=" + String(INFLUX_LOCATION) +
+                " uv_index=" + String(uvIndex, 2) +
+                ",lux=" + String(lux, 2) +
+                ",uv_raw=" + String((unsigned long)uvRaw) + "i" +
+                ",als_raw=" + String((unsigned long)alsRaw) + "i";
+  return post(body);
+}
+
+bool InfluxReporter::sendBme280(float temperature, float humidity,
+                                float pressure) {
+  String body = "bme280_telemetry,location=" + String(INFLUX_LOCATION) +
+                " temperature=" + String(temperature, 2) +
+                ",humidity=" + String(humidity, 2) +
+                ",pressure=" + String(pressure, 2);
+  return post(body);
 }
